@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	proxy := "169.159.131.146"
+	proxy := "138.121.113.164"
 
 	scan := port.ScanPorts(proxy)
 	

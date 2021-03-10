@@ -7,7 +7,6 @@ import (
 	"sync"
 )
 
-var wg *sync.WaitGroup
 
 type PortResult struct {
 	Port    int
@@ -21,22 +20,22 @@ type PortRange struct {
 }
 
 func ScanPorts(hostname string) []PortResult{
+	wg := sync.WaitGroup{}
 	var portResult []PortResult
-	results := make(chan PortResult)
+	results := make(chan PortResult, len(common))
 
 	for port, service := range common {
-		
 		wg.Add(1)
-		go ScanPort(hostname, port, service, results, wg)
+		go ScanPort(hostname, port, service, results, &wg)
 	}
 
-	
+	wg.Wait()
+	close(results)
 
 	for result := range results {
 		portResult = append(portResult, result)
 	}
 	
-	wg.Wait()
 		
 	return portResult
 }

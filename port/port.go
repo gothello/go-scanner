@@ -48,12 +48,17 @@ func ScanPort(hostname string, port int, service string, result chan PortResult,
 		Service: service,
 	}
 
-	_, err := net.DialTimeout("tcp", address, 3 *time.Second)
+	conn, err := net.DialTimeout("tcp", address, 3 *time.Second)
 	if err != nil {
 		portResult.State = false
+		result <-portResult
+		return
 	}
 
+	defer conn.Close()
+
 	portResult.State = true
+
 
 	result <- portResult
 }
